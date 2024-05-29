@@ -12,14 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +72,10 @@ public class ProductService {
             logger.warn(Constants.PRODUCT_NOT_FOUND + id);
             throw new EntityNotFoundException(Constants.PRODUCT_NOT_FOUND + id);
         }
+    }
+
+    public List<Product> getProductsByName(String name) {
+        return productRepository.findByName(name);
     }
 
 }
