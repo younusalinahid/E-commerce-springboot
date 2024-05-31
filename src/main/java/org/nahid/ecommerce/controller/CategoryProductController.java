@@ -1,6 +1,6 @@
 package org.nahid.ecommerce.controller;
 
-import org.nahid.ecommerce.ConstraintsViolationException;
+import org.nahid.ecommerce.exception.ConstraintsViolationException;
 import org.nahid.ecommerce.mapper.CategoryMapper;
 import org.nahid.ecommerce.mapper.ProductMapper;
 import org.nahid.ecommerce.models.Category;
@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class CategoryProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ObjectResponse> getAllCategories() {
+    public ResponseEntity<ObjectResponse> getAllCategories() throws ConstraintViolationException {
         List<Category> category = categoryService.getAllCategories();
         ObjectResponse response = new ObjectResponse(true, "Success", category);
         return new ResponseEntity<>(response, HttpStatus.OK);

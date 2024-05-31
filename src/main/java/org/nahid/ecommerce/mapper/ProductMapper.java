@@ -13,7 +13,7 @@ public class ProductMapper {
     public static Product convertProductRequestWithoutId(Long categoryId, ProductRequest productRequest) {
         Category category = new Category();
         category.setId(categoryId);
-        return new Product(null,
+        return new Product(0,
                 productRequest.getName(),
                 productRequest.getPrice(),
                 productRequest.getSize(),

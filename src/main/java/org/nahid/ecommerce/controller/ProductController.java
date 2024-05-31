@@ -1,7 +1,11 @@
 package org.nahid.ecommerce.controller;
 
 import org.nahid.ecommerce.models.Product;
+import org.nahid.ecommerce.request.CompanyProductRequest;
+import org.nahid.ecommerce.response.ApiResponse;
 import org.nahid.ecommerce.response.ObjectResponse;
+import org.nahid.ecommerce.service.CompanyProductService;
+import org.nahid.ecommerce.service.CompanyService;
 import org.nahid.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +20,12 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    @Autowired
+    CompanyService companyService;
+
+    @Autowired
+    CompanyProductService companyProductService;
+
     @GetMapping
     public ResponseEntity<ObjectResponse> getAllProducts(
             @RequestParam(value = "name", required = false) String name) {
@@ -28,6 +38,13 @@ public class ProductController {
         }
         ObjectResponse response = new ObjectResponse(true, "Success", products);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse> addProductsToCompany(@RequestBody CompanyProductRequest companyProductRequest) {
+        companyProductService.saveProductsInCompany(companyProductRequest);
+        return ResponseEntity.ok().body(new ApiResponse(true,"Products added to company successfully"));
+
     }
 
 

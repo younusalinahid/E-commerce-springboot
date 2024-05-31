@@ -28,5 +28,11 @@ public class Constants {
     public static final String PRODUCT_FOUND = "Product found successfully";
     public static final String PRODUCT_DELETED = "Product delete successfully";
 
+    //Company
+    public static final String COMPANY_CREATED = "Company create successfully";
+    public static final String COMPANY_UPDATED = "Company update successfully";
+    public static final String COMPANY_NOT_FOUND = "Company not found for id";
+    public static final String COMPANY_FOUND_WITH_PRODUCT = "Company found successfully with products";
+    public static final String COMPANY_DELETED = "Company delete successfully";
 
 }

@@ -1,11 +1,14 @@
 package org.nahid.ecommerce.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,7 +17,7 @@ import javax.persistence.*;
 public class Product {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private int price;
@@ -38,10 +41,13 @@ public class Product {
         this.category = category;
     }
 
-    //    Product image
-
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @JsonManagedReference
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
+    private List<Company> companies = new ArrayList<>();
+
 }

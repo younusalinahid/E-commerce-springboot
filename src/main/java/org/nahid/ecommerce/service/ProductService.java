@@ -1,9 +1,8 @@
 package org.nahid.ecommerce.service;
 
-import org.nahid.ecommerce.ConstraintsViolationException;
+import org.nahid.ecommerce.exception.ConstraintsViolationException;
 import org.nahid.ecommerce.models.Product;
 import org.nahid.ecommerce.repository.ProductRepository;
-import org.nahid.ecommerce.request.ProductRequest;
 import org.nahid.ecommerce.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,9 @@ public class ProductService {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    CompanyService companyService;
 
     public Product createProduct(Product product) throws ConstraintsViolationException {
         try {
@@ -77,5 +79,6 @@ public class ProductService {
     public List<Product> getProductsByName(String name) {
         return productRepository.findByName(name);
     }
+
 
 }
