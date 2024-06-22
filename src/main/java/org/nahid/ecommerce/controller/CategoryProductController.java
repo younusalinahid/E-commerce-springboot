@@ -2,7 +2,6 @@ package org.nahid.ecommerce.controller;
 
 import org.nahid.ecommerce.dto.CategoryDTO;
 import org.nahid.ecommerce.dto.CategoryWithProductsDTO;
-import org.nahid.ecommerce.dto.ProductDTO;
 import org.nahid.ecommerce.dto.ProductsWithCategoryName;
 import org.nahid.ecommerce.exception.ConstraintsViolationException;
 import org.nahid.ecommerce.mapper.CategoryMapper;
@@ -19,7 +18,6 @@ import org.nahid.ecommerce.service.CategoryService;
 import org.nahid.ecommerce.service.ProductService;
 import org.nahid.ecommerce.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -75,10 +73,11 @@ public class CategoryProductController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String productName,
             @RequestParam(required = false) Integer minPrice,
-            @RequestParam(required = false) Integer maxPrice) {
+            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(defaultValue = "ASC") String sortDirection) {
 
         Pageable pageable = PageRequest.of(page, size);
-        ProductsWithCategoryName response = categoryService.getCategoryWithProducts(categoryId, pageable, productName, minPrice, maxPrice);
+        ProductsWithCategoryName response = categoryService.getCategoryWithProducts(categoryId, pageable, productName, minPrice, maxPrice, sortDirection);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PutMapping("/{categoryId}")
@@ -92,7 +91,7 @@ public class CategoryProductController {
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse> deleteById(@PathVariable("id") @Valid long id) {
+    public ResponseEntity<ApiResponse> deleteById(@PathVariable("categoryId") @Valid long id) {
         categoryService.deleteById(id);
         return ResponseEntity.ok(new ApiResponse(true, Constants.CATEGORY_DELETED));
     }

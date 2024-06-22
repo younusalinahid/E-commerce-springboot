@@ -6,6 +6,7 @@ import org.nahid.ecommerce.models.Category;
 import org.nahid.ecommerce.models.Product;
 import org.nahid.ecommerce.request.ProductRequest;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,8 @@ public class ProductMapper {
                 category);
     }
 
+
+
     public static ProductDTO toProductDTO(Product product) {
         return new ProductDTO(
                 product.getId(),
@@ -45,10 +48,10 @@ public class ProductMapper {
                 product.getPrice(),
                 product.getSize(),
                 product.getDescription(),
+                product.getCreatedDate(),
                 product.getCompanies().stream()
                         .map(company -> new CompanyDTO(company.getId(), company.getCompanyName()))
                         .collect(Collectors.toList())
         );
     }
-
 }

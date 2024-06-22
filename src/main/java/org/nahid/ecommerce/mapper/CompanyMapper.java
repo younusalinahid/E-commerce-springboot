@@ -41,6 +41,7 @@ public class CompanyMapper {
                         product.getPrice(),
                         product.getSize(),
                         product.getDescription(),
+                        product.getCreatedDate(),
                         product.getCompanies().stream()
                                 .map(comp -> new CompanyDTO(comp.getId(), comp.getCompanyName()))
                                 .collect(Collectors.toList())

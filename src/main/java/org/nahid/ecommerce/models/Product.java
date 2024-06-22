@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,5 +52,11 @@ public class Product {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
     private List<Company> companies = new ArrayList<>();
 
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
+    @PrePersist
+    public void prePersist() {
+        this.createdDate = LocalDateTime.now();
+    }
 }

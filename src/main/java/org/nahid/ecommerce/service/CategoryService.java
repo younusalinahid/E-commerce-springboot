@@ -22,6 +22,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -111,18 +112,23 @@ public class CategoryService {
                 categories.getTotalElements(), categories.getTotalPages(), categories.isLast());
     }
 
-    public ProductsWithCategoryName getCategoryWithProducts(Long categoryId, Pageable pageable, String productName, Integer minPrice, Integer maxPrice) {
+    public ProductsWithCategoryName getCategoryWithProducts(Long categoryId, Pageable pageable, String productName, Integer minPrice, Integer maxPrice, String sortDirection) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        Page<Product> productsPage;
-        if (productName != null && !productName.isEmpty()) {
-            productsPage = productRepository.findByCategoryIdAndNameContaining(categoryId, productName, pageable);
-        } else if (minPrice != null && maxPrice != null) {
-            productsPage = productRepository.findByCategoryIdAndPriceRange(categoryId, minPrice, maxPrice, pageable);
-        } else {
-            productsPage = productRepository.findByCategoryId(categoryId, pageable);
-        }
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), "price");
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        Page<Product> productsPage = productRepository.findByCategoryIdAndFilters(categoryId, productName, minPrice, maxPrice, pageable);
+
+//        Page<Product> productsPage;
+//        if (productName != null && !productName.isEmpty()) {
+//            productsPage = productRepository.findByCategoryIdAndNameContaining(categoryId, productName, pageable);
+//        } else if (minPrice != null && maxPrice != null) {
+//            productsPage = productRepository.findByCategoryIdAndPriceRange(categoryId, minPrice, maxPrice, pageable);
+//        } else {
+//            productsPage = productRepository.findByCategoryId(categoryId, pageable);
+//        }
 
         List<ProductDTO> productDTOList = productsPage.getContent()
                 .stream()
