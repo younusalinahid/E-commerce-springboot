@@ -1,5 +1,4 @@
 package org.nahid.ecommerce.mapper;
-
 import org.nahid.ecommerce.dto.CategoryDTO;
 import org.nahid.ecommerce.models.Category;
 import org.nahid.ecommerce.request.CategoryRequest;
@@ -20,6 +19,13 @@ public class CategoryMapper {
                 category.getId(),
                 category.getName()
         );
+    }
+
+    public static CategoryDTO toCategoryDTO(Category category) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        return dto;
     }
 
     public static Category convertCategoryRequestWithId(

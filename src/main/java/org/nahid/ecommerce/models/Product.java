@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,5 +50,6 @@ public class Product {
     @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
     private List<Company> companies = new ArrayList<>();
+
 
 }

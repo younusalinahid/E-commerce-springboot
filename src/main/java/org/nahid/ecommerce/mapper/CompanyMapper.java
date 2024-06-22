@@ -1,7 +1,7 @@
 package org.nahid.ecommerce.mapper;
 
 import org.nahid.ecommerce.dto.CompanyDTO;
-import org.nahid.ecommerce.dto.CompanyProductDTO;
+import org.nahid.ecommerce.dto.CompanyWithProductDTO;
 import org.nahid.ecommerce.dto.ProductDTO;
 import org.nahid.ecommerce.models.Company;
 import org.nahid.ecommerce.request.CompanyRequest;
@@ -33,17 +33,21 @@ public class CompanyMapper {
                 companyRequest.getCompanyName());
     }
 
-    public static CompanyProductDTO convertCompanyWithProductDTO(Company company) {
+    public static CompanyWithProductDTO convertCompanyWithProductDTO(Company company) {
         List<ProductDTO> productDTOs = company.getProducts().stream()
                 .map(product -> new ProductDTO(
                         product.getId(),
                         product.getName(),
                         product.getPrice(),
                         product.getSize(),
-                        product.getDescription()))
+                        product.getDescription(),
+                        product.getCompanies().stream()
+                                .map(comp -> new CompanyDTO(comp.getId(), comp.getCompanyName()))
+                                .collect(Collectors.toList())
+                        ))
                 .collect(Collectors.toList());
 
-        return new CompanyProductDTO(
+        return new CompanyWithProductDTO(
                 company.getId(),
                 company.getCompanyName(),
                 productDTOs

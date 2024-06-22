@@ -1,6 +1,6 @@
 package org.nahid.ecommerce.controller;
 
-import org.nahid.ecommerce.dto.CompanyProductDTO;
+import org.nahid.ecommerce.dto.CompanyWithProductDTO;
 import org.nahid.ecommerce.exception.ConstraintsViolationException;
 import org.nahid.ecommerce.mapper.CompanyMapper;
 import org.nahid.ecommerce.models.Company;
@@ -55,7 +55,7 @@ public class CompanyController {
         if (company == null) {
             return ResponseEntity.notFound().build();
         }
-        CompanyProductDTO companyProductDTO = CompanyMapper.convertCompanyWithProductDTO(company);
+        CompanyWithProductDTO companyProductDTO = CompanyMapper.convertCompanyWithProductDTO(company);
         return ResponseEntity.ok(new ObjectResponse(true, Constants.COMPANY_FOUND_WITH_PRODUCT, companyProductDTO));
     }
 

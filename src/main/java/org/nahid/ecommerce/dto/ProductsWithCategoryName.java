@@ -3,17 +3,13 @@ package org.nahid.ecommerce.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.nahid.ecommerce.utils.Constants;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import org.nahid.ecommerce.response.PageResponse;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDTO {
-
+@NoArgsConstructor
+public class ProductsWithCategoryName{
     private Long id;
     private String name;
-
+    private PageResponse<ProductDTO> products;
 }
