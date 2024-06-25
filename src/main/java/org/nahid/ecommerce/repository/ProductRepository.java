@@ -35,4 +35,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                              @Param("minPrice") Integer minPrice,
                                              @Param("maxPrice") Integer maxPrice,
                                              Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId AND p.discount.percentage IS NOT NULL ORDER BY p.discount.percentage DESC")
+    Page<Product> findByCategoryIdAndDiscount(@Param("categoryId") Long categoryId, Pageable pageable);
 }

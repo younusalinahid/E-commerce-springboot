@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
+public class ProductWithCateDiscDTO {
 
     private Long id;
     private String name;
@@ -21,7 +21,7 @@ public class ProductDTO {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private LocalDateTime createdDate;
-    //private DiscountDTO discountDTO;
+    private DiscountDTO discountDTO;
     private List<CompanyDTO> companies;
 
 

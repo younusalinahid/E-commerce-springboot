@@ -35,4 +35,13 @@ public class Constants {
     public static final String COMPANY_FOUND_WITH_PRODUCT = "Company found successfully with products";
     public static final String COMPANY_DELETED = "Company delete successfully";
 
+    //Discount
+    public static final String DISCOUNT_CREATED = "Discount create successfully";
+    public static final String DISCOUNT_UPDATED = "Discount update successfully";
+    public static final String DISCOUNT_NOT_FOUND = "Discount not found for id";
+    //public static final String DISCOUNT_FOUND_WITH_PRODUCT = "Company found successfully with products";
+    public static final String DISCOUNT_FOUND = "Discount found successfully";
+
+    public static final String DISCOUNT_DELETED = "Discount delete successfully";
+
 }

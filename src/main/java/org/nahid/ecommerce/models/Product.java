@@ -59,4 +59,8 @@ public class Product {
     public void prePersist() {
         this.createdDate = LocalDateTime.now();
     }
+
+    @OneToOne
+    @JoinColumn(name = "discount_id")
+    private Discount discount;
 }

@@ -1,8 +1,11 @@
 package org.nahid.ecommerce.mapper;
 
 import org.nahid.ecommerce.dto.CompanyDTO;
+import org.nahid.ecommerce.dto.DiscountDTO;
 import org.nahid.ecommerce.dto.ProductDTO;
 import org.nahid.ecommerce.models.Category;
+import org.nahid.ecommerce.models.Company;
+import org.nahid.ecommerce.models.Discount;
 import org.nahid.ecommerce.models.Product;
 import org.nahid.ecommerce.request.ProductRequest;
 
@@ -40,7 +43,6 @@ public class ProductMapper {
     }
 
 
-
     public static ProductDTO toProductDTO(Product product) {
         return new ProductDTO(
                 product.getId(),
@@ -54,4 +56,5 @@ public class ProductMapper {
                         .collect(Collectors.toList())
         );
     }
+
 }
