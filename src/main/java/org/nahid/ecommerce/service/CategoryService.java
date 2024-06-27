@@ -1,9 +1,6 @@
 package org.nahid.ecommerce.service;
 
-import org.nahid.ecommerce.dto.CategoryDTO;
-import org.nahid.ecommerce.dto.CategoryWithProductsDTO;
-import org.nahid.ecommerce.dto.ProductDTO;
-import org.nahid.ecommerce.dto.ProductsWithCategoryName;
+import org.nahid.ecommerce.dto.*;
 import org.nahid.ecommerce.exception.ConstraintsViolationException;
 import org.nahid.ecommerce.mapper.CategoryMapper;
 import org.nahid.ecommerce.mapper.ProductMapper;
@@ -102,7 +99,7 @@ public class CategoryService {
                 .map(category -> {
                     List<Product> products = productRepository.findByCategoryId(category.getId(), PageRequest.of(0, productPageSize)).getContent();
                     List<ProductDTO> productDTOList = products.stream()
-                            .map(ProductMapper::toProductDTO)
+                            .map(ProductMapper::convertProductWithoutDiscount)
                             .collect(Collectors.toList());
                     return new CategoryWithProductsDTO(category.getId(), category.getName(), productDTOList);
                 })
@@ -112,30 +109,21 @@ public class CategoryService {
                 categories.getTotalElements(), categories.getTotalPages(), categories.isLast());
     }
 
-    public ProductsWithCategoryName getCategoryWithProducts(Long categoryId, Pageable pageable, String productName, Integer minPrice, Integer maxPrice, String sortDirection) {
+    public ProductsWithCategoryName getCategoryWithProducts(Long categoryId, Pageable pageable, String productName, Integer minPrice, Integer maxPrice, String sortDirection, boolean discount) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), "price");
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        Page<Product> productsPage = productRepository.findByCategoryIdAndFilters(categoryId, productName, minPrice, maxPrice, pageable);
+        Page<Product> productsPage = productRepository.findByCategoryIdAndFilters(categoryId, productName, minPrice, maxPrice, discount, pageable);
 
-//        Page<Product> productsPage;
-//        if (productName != null && !productName.isEmpty()) {
-//            productsPage = productRepository.findByCategoryIdAndNameContaining(categoryId, productName, pageable);
-//        } else if (minPrice != null && maxPrice != null) {
-//            productsPage = productRepository.findByCategoryIdAndPriceRange(categoryId, minPrice, maxPrice, pageable);
-//        } else {
-//            productsPage = productRepository.findByCategoryId(categoryId, pageable);
-//        }
-
-        List<ProductDTO> productDTOList = productsPage.getContent()
+        List<ProductWithDiscountDTO> productDTOList = productsPage.getContent()
                 .stream()
                 .map(ProductMapper::toProductDTO)
                 .collect(Collectors.toList());
 
-        PageResponse<ProductDTO> productPageResponse = new PageResponse<>(
+        PageResponse<ProductWithDiscountDTO> productPageResponse = new PageResponse<>(
                 productDTOList, productsPage.getNumber(), productsPage.getSize(),
                 productsPage.getTotalElements(), productsPage.getTotalPages(), productsPage.isLast()
         );

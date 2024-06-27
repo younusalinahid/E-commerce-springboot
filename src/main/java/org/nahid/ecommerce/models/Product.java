@@ -60,7 +60,12 @@ public class Product {
         this.createdDate = LocalDateTime.now();
     }
 
-    @OneToOne
+//    @OneToOne
+//    @JoinColumn(name = "discount_id")
+//    private Discount discount;
+
+    @ManyToOne
     @JoinColumn(name = "discount_id")
     private Discount discount;
+
 }

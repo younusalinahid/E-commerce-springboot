@@ -11,5 +11,8 @@ import org.nahid.ecommerce.response.PageResponse;
 public class ProductsWithCategoryName{
     private Long id;
     private String name;
-    private PageResponse<ProductDTO> products;
+    private PageResponse<ProductWithDiscountDTO> products;
+//    private DiscountDTO discountDTO;
+
+
 }

@@ -1,7 +1,9 @@
 package org.nahid.ecommerce.controller;
 
+import org.nahid.ecommerce.dto.ProductSetDiscountDTO;
 import org.nahid.ecommerce.models.Product;
 import org.nahid.ecommerce.request.CompanyProductRequest;
+import org.nahid.ecommerce.request.ProductDiscountRequest;
 import org.nahid.ecommerce.response.ApiResponse;
 import org.nahid.ecommerce.response.ObjectResponse;
 import org.nahid.ecommerce.service.CompanyProductService;
@@ -36,16 +38,22 @@ public class ProductController {
         } else {
             products = productService.getAllProducts();
         }
+
         ObjectResponse response = new ObjectResponse(true, "Success", products);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/addCompany")
     public ResponseEntity<ApiResponse> addProductsToCompany(@RequestBody CompanyProductRequest companyProductRequest) {
         companyProductService.saveProductsInCompany(companyProductRequest);
         return ResponseEntity.ok().body(new ApiResponse(true,"Products added to company successfully"));
 
     }
 
+    @PostMapping("/addDiscount")
+    public ResponseEntity<List<ProductSetDiscountDTO>> setDiscountsOnProducts(@RequestBody ProductDiscountRequest request) {
+        List<ProductSetDiscountDTO> productDiscountDTOs = productService.setDiscountsOnProducts(request.getProductIds(), request.getDiscountId());
+        return ResponseEntity.ok(productDiscountDTOs);
+    }
 
 }

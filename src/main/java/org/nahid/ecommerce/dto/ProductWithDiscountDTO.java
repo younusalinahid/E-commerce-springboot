@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductWithCateDiscDTO {
+public class ProductWithDiscountDTO {
 
     private Long id;
     private String name;
@@ -23,7 +22,5 @@ public class ProductWithCateDiscDTO {
     private LocalDateTime createdDate;
     private DiscountDTO discountDTO;
     private List<CompanyDTO> companies;
-
-
 
 }

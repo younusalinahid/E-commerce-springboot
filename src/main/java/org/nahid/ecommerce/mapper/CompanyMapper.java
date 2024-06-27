@@ -2,8 +2,10 @@ package org.nahid.ecommerce.mapper;
 
 import org.nahid.ecommerce.dto.CompanyDTO;
 import org.nahid.ecommerce.dto.CompanyWithProductDTO;
+import org.nahid.ecommerce.dto.DiscountDTO;
 import org.nahid.ecommerce.dto.ProductDTO;
 import org.nahid.ecommerce.models.Company;
+import org.nahid.ecommerce.models.Discount;
 import org.nahid.ecommerce.request.CompanyRequest;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,4 +57,34 @@ public class CompanyMapper {
         );
     }
 
+//    public static CompanyWithProductDTO convertCompanyWithProductDTO(Company company) {
+//        List<ProductDTO> productDTOs = company.getProducts().stream()
+//                .map(product -> {
+//                    Discount discount = product.getDiscount();
+//                    DiscountDTO discountDTO = discount != null ? new DiscountDTO(
+//                            discount.getId(),
+//                            discount.getPercentage()
+//                    ) : null;
+//
+//                    return new ProductDTO(
+//                            product.getId(),
+//                            product.getName(),
+//                            product.getPrice(),
+//                            product.getSize(),
+//                            product.getDescription(),
+//                            product.getCreatedDate(),
+//                            discountDTO,
+//                            product.getCompanies().stream()
+//                                    .map(comp -> new CompanyDTO(comp.getId(), comp.getCompanyName()))
+//                                    .collect(Collectors.toList())
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//
+//        return new CompanyWithProductDTO(
+//                company.getId(),
+//                company.getCompanyName(),
+//                productDTOs
+//        );
+//    }
 }

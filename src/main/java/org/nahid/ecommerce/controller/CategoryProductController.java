@@ -74,10 +74,11 @@ public class CategoryProductController {
             @RequestParam(required = false) String productName,
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice,
-            @RequestParam(defaultValue = "ASC") String sortDirection) {
+            @RequestParam(defaultValue = "ASC") String sortDirection,
+            @RequestParam(required = false) boolean discount) {
 
         Pageable pageable = PageRequest.of(page, size);
-        ProductsWithCategoryName response = categoryService.getCategoryWithProducts(categoryId, pageable, productName, minPrice, maxPrice, sortDirection);
+        ProductsWithCategoryName response = categoryService.getCategoryWithProducts(categoryId, pageable, productName, minPrice, maxPrice, sortDirection, discount);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PutMapping("/{categoryId}")

@@ -1,13 +1,11 @@
 package org.nahid.ecommerce.service;
 
-import org.nahid.ecommerce.dto.CategoryWithProductsDTO;
-import org.nahid.ecommerce.dto.ProductDTO;
+import org.nahid.ecommerce.dto.ProductSetDiscountDTO;
 import org.nahid.ecommerce.exception.ConstraintsViolationException;
-import org.nahid.ecommerce.mapper.ProductMapper;
-import org.nahid.ecommerce.models.Category;
+import org.nahid.ecommerce.models.Discount;
 import org.nahid.ecommerce.models.Product;
+import org.nahid.ecommerce.repository.DiscountRepository;
 import org.nahid.ecommerce.repository.ProductRepository;
-import org.nahid.ecommerce.response.PageResponse;
 import org.nahid.ecommerce.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +13,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +35,9 @@ public class ProductService {
 
     @Autowired
     CompanyService companyService;
+
+    @Autowired
+    DiscountRepository discountRepository;
 
     public Product createProduct(Product product) throws ConstraintsViolationException {
         try {
@@ -86,6 +86,19 @@ public class ProductService {
 
     public List<Product> getProductsByName(String name) {
         return productRepository.findByName(name);
+    }
+
+    public List<ProductSetDiscountDTO> setDiscountsOnProducts(List<Long> productIds, Long discountId) {
+        Discount discount = discountRepository.findById(discountId)
+                .orElseThrow(() -> new RuntimeException("Discount not found"));
+
+        List<Product> products = productRepository.findAllById(productIds);
+        products.forEach(product -> product.setDiscount(discount));
+        productRepository.saveAll(products);
+
+        return products.stream()
+                .map(product -> new ProductSetDiscountDTO(product.getId(), discount.getId()))
+                .collect(Collectors.toList());
     }
 
 }
