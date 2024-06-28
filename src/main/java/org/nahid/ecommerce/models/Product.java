@@ -60,12 +60,10 @@ public class Product {
         this.createdDate = LocalDateTime.now();
     }
 
-//    @OneToOne
-//    @JoinColumn(name = "discount_id")
-//    private Discount discount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discount_id")
+    @JsonBackReference
     private Discount discount;
 
 }

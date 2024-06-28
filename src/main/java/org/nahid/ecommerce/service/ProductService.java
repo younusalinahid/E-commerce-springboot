@@ -88,17 +88,17 @@ public class ProductService {
         return productRepository.findByName(name);
     }
 
-    public List<ProductSetDiscountDTO> setDiscountsOnProducts(List<Long> productIds, Long discountId) {
-        Discount discount = discountRepository.findById(discountId)
-                .orElseThrow(() -> new RuntimeException("Discount not found"));
+    public void setDiscountOnProducts(ProductSetDiscountDTO dto) {
+        Optional<Discount> discountOpt = discountRepository.findById(dto.getDiscountId());
+        if (!discountOpt.isPresent()) {
+            throw new RuntimeException("Discount not found: " + dto.getDiscountId());
+        }
+        Discount discount = discountOpt.get();
 
-        List<Product> products = productRepository.findAllById(productIds);
-        products.forEach(product -> product.setDiscount(discount));
+        List<Product> products = productRepository.findAllById(dto.getProductIds());
+        for (Product product : products) {
+            product.setDiscount(discount);
+        }
         productRepository.saveAll(products);
-
-        return products.stream()
-                .map(product -> new ProductSetDiscountDTO(product.getId(), discount.getId()))
-                .collect(Collectors.toList());
     }
-
 }

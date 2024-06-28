@@ -30,7 +30,7 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<ObjectResponse> getAllProducts(
-            @RequestParam(value = "name", required = false) String name) {
+            @RequestParam(value = "productName", required = false) String name) {
 
         List<Product> products;
         if (name != null) {
@@ -42,6 +42,13 @@ public class ProductController {
         ObjectResponse response = new ObjectResponse(true, "Success", products);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+//
+//@GetMapping
+//public ResponseEntity<ObjectResponse> getAllProducts() {
+//    List<Product> products = productService.getAllProducts();
+//    ObjectResponse response = new ObjectResponse(true, "Success", products);
+//    return new ResponseEntity<>(response, HttpStatus.OK);
+//}
 
     @PostMapping("/addCompany")
     public ResponseEntity<ApiResponse> addProductsToCompany(@RequestBody CompanyProductRequest companyProductRequest) {
@@ -51,9 +58,11 @@ public class ProductController {
     }
 
     @PostMapping("/addDiscount")
-    public ResponseEntity<List<ProductSetDiscountDTO>> setDiscountsOnProducts(@RequestBody ProductDiscountRequest request) {
-        List<ProductSetDiscountDTO> productDiscountDTOs = productService.setDiscountsOnProducts(request.getProductIds(), request.getDiscountId());
-        return ResponseEntity.ok(productDiscountDTOs);
+    public ResponseEntity<ObjectResponse> setDiscountOnProducts(@RequestBody ProductSetDiscountDTO dto) {
+        productService.setDiscountOnProducts(dto);
+        ObjectResponse response = new ObjectResponse(true, "Discount set on products successfully", null);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
 }

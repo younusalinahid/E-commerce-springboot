@@ -1,5 +1,6 @@
 package org.nahid.ecommerce.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class Discount {
     private String percentage;
 
     @OneToMany(mappedBy = "discount")
+    @JsonManagedReference
     private List<Product> products;
 
     public Discount(Long id, String percentage) {
