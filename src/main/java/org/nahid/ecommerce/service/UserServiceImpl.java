@@ -1,20 +1,21 @@
 package org.nahid.ecommerce.service;
 
 import org.nahid.ecommerce.config.JwtUtils;
-import org.nahid.ecommerce.config.UserInfoConfig;
+import org.nahid.ecommerce.config.UserDetailsImpl;
+import org.nahid.ecommerce.dto.UserDTO;
 import org.nahid.ecommerce.models.ERole;
 import org.nahid.ecommerce.models.Role;
 import org.nahid.ecommerce.models.User;
 import org.nahid.ecommerce.repository.RoleRepository;
 import org.nahid.ecommerce.repository.UserRepository;
 import org.nahid.ecommerce.request.LoginRequest;
-import org.nahid.ecommerce.request.SignUpRequest;
 import org.nahid.ecommerce.response.JwtResponse;
-import org.nahid.ecommerce.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,65 +67,55 @@ public class UserServiceImpl implements UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserInfoConfig userInfo = (UserInfoConfig) authentication.getPrincipal();
+        UserDetailsImpl userInfo = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userInfo.getAuthorities().stream()
-                .map(item -> item.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return new JwtResponse(jwt, userInfo.getId(), userInfo.getUsername(), roles);
     }
 
     @Override
-    public MessageResponse registerUser(SignUpRequest signUpRequest) {
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new MessageResponse("Error: Email is already in use!");
-        }
+    public UserDTO registerUser(UserDTO userDTO) {
+        try {
+            User user = new User();
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setEmail(userDTO.getEmail());
+            user.setPassword(encoder.encode(userDTO.getPassword()));
 
-        User user = new User();
-        user.setFirstName(signUpRequest.getFirstName());
-        user.setLastName(signUpRequest.getLastName());
-        user.setMobileNumber(signUpRequest.getMobileNumber());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(encoder.encode(signUpRequest.getPassword()));
+            Set<String> strRoles = userDTO.getRole();
+            Set<Role> roles = new HashSet<>();
 
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null || strRoles.isEmpty()) {
-            // Assign default role if no roles are specified
-            Optional<Role> userRoleOptional = roleRepository.findByName(ERole.USER);
-            if (userRoleOptional.isPresent()) {
-                roles.add(userRoleOptional.get());
+            if (strRoles == null || strRoles.isEmpty()) {
+                Role userRole = roleRepository.findByName(ERole.USER)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(userRole);
             } else {
-                return new MessageResponse("Error: Default role is not found.");
-            }
-        } else {
-            for (String role : strRoles) {
-                switch (role.toLowerCase()) {
-                    case "admin":
-                        Optional<Role> adminRoleOptional = roleRepository.findByName(ERole.ADMIN);
-                        if (adminRoleOptional.isPresent()) {
-                            roles.add(adminRoleOptional.get());
-                        } else {
-                            return new MessageResponse("Error: Admin role is not found.");
-                        }
-                        break;
-                    case "user":
-                        Optional<Role> userRoleOptional = roleRepository.findByName(ERole.USER);
-                        if (userRoleOptional.isPresent()) {
-                            roles.add(userRoleOptional.get());
-                        } else {
-                            return new MessageResponse("Error: User role is not found.");
-                        }
-                        break;
-                    default:
-                        return new MessageResponse("Error: Role " + role + " is not recognized.");
+                for (String role : strRoles) {
+                    switch (role.toLowerCase()) {
+                        case "admin":
+                            Role adminRole = roleRepository.findByName(ERole.ADMIN)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(adminRole);
+                            break;
+                        case "user":
+                            Role userRole = roleRepository.findByName(ERole.USER)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(userRole);
+                            break;
+                        default:
+                            throw new RuntimeException("Error: Role " + role + " is not recognized.");
+                    }
                 }
             }
-        }
 
-        user.setRoles(roles);
-        userRepository.save(user);
-        return new MessageResponse("User registered successfully!");
+            user.setRoles(roles);
+            userRepository.save(user);
+
+            return userDTO;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("User already exists with email: " + userDTO.getEmail());
+        }
     }
 }
