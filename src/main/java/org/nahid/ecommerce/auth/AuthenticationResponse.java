@@ -1,4 +1,4 @@
-package org.nahid.ecommerce.request;
+package org.nahid.ecommerce.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequest {
+public class AuthenticationResponse {
 
-    private String email;
-    String password;
+    private String token;
 
 }
