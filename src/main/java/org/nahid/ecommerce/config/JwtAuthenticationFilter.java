@@ -14,7 +14,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @Component
@@ -25,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     JwtService jwtService;
 
     @Autowired
-    private final UserDetailsService userDetailsService;
+    UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
