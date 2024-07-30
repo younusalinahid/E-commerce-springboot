@@ -42,13 +42,6 @@ public class ProductController {
         ObjectResponse response = new ObjectResponse(true, "Success", products);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-//
-//@GetMapping
-//public ResponseEntity<ObjectResponse> getAllProducts() {
-//    List<Product> products = productService.getAllProducts();
-//    ObjectResponse response = new ObjectResponse(true, "Success", products);
-//    return new ResponseEntity<>(response, HttpStatus.OK);
-//}
 
     @PostMapping("/addCompany")
     public ResponseEntity<ApiResponse> addProductsToCompany(@RequestBody CompanyProductRequest companyProductRequest) {

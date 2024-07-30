@@ -25,6 +25,5 @@ public class Payment {
 
     @NotBlank
     @Size(min = 4, message = "Payment method must contain at least 4 characters")
-    @Column(name = "payment_method")
     private String paymentMethod;
 }

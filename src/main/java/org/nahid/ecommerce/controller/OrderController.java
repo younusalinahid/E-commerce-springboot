@@ -2,15 +2,10 @@ package org.nahid.ecommerce.controller;
 
 import org.nahid.ecommerce.dto.OrderDTO;
 import org.nahid.ecommerce.dto.OrderItemDTO;
-import org.nahid.ecommerce.models.Order;
-import org.nahid.ecommerce.models.OrderItem;
-import org.nahid.ecommerce.models.User;
-import org.nahid.ecommerce.repository.UserRepository;
 import org.nahid.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,9 +20,10 @@ public class OrderController {
     @PostMapping("/user/{userId}")
     public ResponseEntity<OrderDTO> orderProducts(
             @PathVariable Long userId,
+            @RequestParam String paymentMethod,
             @RequestBody List<OrderItemDTO> orderItems) {
 
-        OrderDTO order = orderService.createOrder(userId, orderItems);
+        OrderDTO order = orderService.createOrder(userId, paymentMethod, orderItems);
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
@@ -43,5 +39,19 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    @PutMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> updateOrder(
+            @PathVariable Long orderId,
+            @RequestParam String paymentMethod,
+            @RequestBody List<OrderItemDTO> orderItems) {
 
+        OrderDTO updatedOrder = orderService.updateOrder(orderId, paymentMethod, orderItems);
+        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
+        orderService.deleteOrder(orderId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

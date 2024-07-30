@@ -43,12 +43,6 @@ public class CompanyController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @GetMapping("/{companyId}")
-//    public ResponseEntity<ObjectResponse> getById(@PathVariable("companyId") @Valid long id) {
-//        Company company = companyService.getById(id);
-//        return ResponseEntity.ok(new ObjectResponse(true, Constants.CATEGORY_FOUND, company));
-//    }
-
     @GetMapping("/{companyId}")
     public ResponseEntity<ObjectResponse> getCompanyWithProducts(@PathVariable Long companyId) {
         Company company = companyService.getById(companyId);

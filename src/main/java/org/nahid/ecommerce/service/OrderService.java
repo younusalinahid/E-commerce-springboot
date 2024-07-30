@@ -3,14 +3,19 @@ package org.nahid.ecommerce.service;
 import org.nahid.ecommerce.dto.OrderDTO;
 import org.nahid.ecommerce.dto.OrderItemDTO;
 import org.nahid.ecommerce.mapper.OrderMapper;
-import org.nahid.ecommerce.models.*;
-import org.nahid.ecommerce.repository.*;
+import org.nahid.ecommerce.models.Order;
+import org.nahid.ecommerce.models.OrderItem;
+import org.nahid.ecommerce.models.Payment;
+import org.nahid.ecommerce.models.Product;
+import org.nahid.ecommerce.models.User;
+import org.nahid.ecommerce.repository.OrderRepository;
+import org.nahid.ecommerce.repository.PaymentRepository;
+import org.nahid.ecommerce.repository.ProductRepository;
+import org.nahid.ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,13 +23,10 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
-    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -35,7 +37,8 @@ public class OrderService {
     @Autowired
     private OrderMapper orderMapper;
 
-    public OrderDTO createOrder(Long userId, List<OrderItemDTO> orderItemsDTO) {
+    @Transactional
+    public OrderDTO createOrder(Long userId, String paymentMethod, List<OrderItemDTO> orderItems) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -43,14 +46,11 @@ public class OrderService {
         order.setUser(user);
         order.setOrderDate(LocalDate.now());
         order.setOrderStatus("Order Accepted !");
-        order.setOrderItems(new ArrayList<>());
 
-        Integer totalAmount = 0;
-
-        for (OrderItemDTO itemDTO : orderItemsDTO) {
+        double totalAmount = 0;
+        for (OrderItemDTO itemDTO : orderItems) {
             Product product = productRepository.findById(itemDTO.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
-
             OrderItem item = new OrderItem();
             item.setOrder(order);
             item.setProduct(product);
@@ -59,11 +59,49 @@ public class OrderService {
             order.getOrderItems().add(item);
             totalAmount += item.getPrice();
         }
-
         order.setTotalAmount(totalAmount);
-        Order savedOrder = orderRepository.save(order);
 
-        return orderMapper.mapToOrderDTO(savedOrder);
+        // Save the order first
+        orderRepository.save(order);
+
+        // Create and set the payment
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setPaymentMethod(paymentMethod);
+        paymentRepository.save(payment);
+
+        return orderMapper.mapToOrderDTO(order);
+    }
+
+    @Transactional
+    public OrderDTO updateOrder(Long orderId, String paymentMethod, List<OrderItemDTO> orderItems) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // Update order details
+        double totalAmount = 0;
+        order.getOrderItems().clear();
+        for (OrderItemDTO itemDTO : orderItems) {
+            Product product = productRepository.findById(itemDTO.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            item.setProduct(product);
+            item.setQuantity(itemDTO.getQuantity());
+            item.setPrice(product.getPrice() * itemDTO.getQuantity());
+            order.getOrderItems().add(item);
+            totalAmount += item.getPrice();
+        }
+        order.setTotalAmount(totalAmount);
+
+        // Update payment
+        Payment payment = paymentRepository.findByOrder(order)
+                .orElse(new Payment()); // Create a new Payment if not found
+        payment.setOrder(order);
+        payment.setPaymentMethod(paymentMethod);
+        paymentRepository.save(payment);
+
+        return orderMapper.mapToOrderDTO(orderRepository.save(order));
     }
 
     public OrderDTO getOrderById(Long orderId) {
@@ -74,8 +112,12 @@ public class OrderService {
 
     public List<OrderDTO> getOrdersByUserId(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
-        return orders.stream()
-                .map(orderMapper::mapToOrderDTO)
-                .collect(Collectors.toList());
+        return orders.stream().map(orderMapper::mapToOrderDTO).collect(Collectors.toList());
+    }
+
+    public void deleteOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        orderRepository.delete(order);
     }
 }
