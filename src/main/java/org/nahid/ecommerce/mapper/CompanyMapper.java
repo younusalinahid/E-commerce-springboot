@@ -42,6 +42,7 @@ public class CompanyMapper {
                         product.getName(),
                         product.getPrice(),
                         product.getSize(),
+                        product.getStockQuantity(),
                         product.getDescription(),
                         product.getCreatedDate(),
                         product.getCompanies().stream()

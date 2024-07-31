@@ -26,6 +26,8 @@ public class ProductRequest {
     @NotNull(message = Constants.NOT_EMPTY_SIZE)
     private String size;
 
+    private int stockQuantity;
+
     @Size(min = 10, message = Constants.MIN_DESCRIPTION_LENGTH)
     private String description;
 

@@ -24,21 +24,25 @@ public class Product {
     private String name;
     private int price;
     private String size;
+    private int stockQuantity;
     private String description;
 
-    public Product(Long id, String name, int price, String size, String description) {
+
+    public Product(Long id, String name, int price, String size, int stockQuantity, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.size = size;
+        this.stockQuantity = stockQuantity;
         this.description = description;
     }
 
-    public Product(long id, String name, int price, String size, String description, Category category) {
+    public Product(long id, String name, int price, String size, int stockQuantity, String description, Category category) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.size = size;
+        this.stockQuantity = stockQuantity;
         this.description = description;
         this.category = category;
     }

@@ -2,6 +2,7 @@ package org.nahid.ecommerce.service;
 
 import org.nahid.ecommerce.dto.OrderDTO;
 import org.nahid.ecommerce.dto.OrderItemDTO;
+import org.nahid.ecommerce.exception.InsufficientStockException;
 import org.nahid.ecommerce.mapper.OrderMapper;
 import org.nahid.ecommerce.models.Order;
 import org.nahid.ecommerce.models.OrderItem;
@@ -51,6 +52,11 @@ public class OrderService {
         for (OrderItemDTO itemDTO : orderItems) {
             Product product = productRepository.findById(itemDTO.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            if (product.getStockQuantity() < itemDTO.getQuantity()) {
+                throw new InsufficientStockException("Not enough stock this product: " + product.getName());
+            }
+
             OrderItem item = new OrderItem();
             item.setOrder(order);
             item.setProduct(product);
@@ -58,10 +64,11 @@ public class OrderService {
             item.setPrice(product.getPrice() * itemDTO.getQuantity());
             order.getOrderItems().add(item);
             totalAmount += item.getPrice();
+
+            product.setStockQuantity(product.getStockQuantity() - itemDTO.getQuantity());
+            productRepository.save(product);
         }
         order.setTotalAmount(totalAmount);
-
-        // Save the order first
         orderRepository.save(order);
 
         // Create and set the payment

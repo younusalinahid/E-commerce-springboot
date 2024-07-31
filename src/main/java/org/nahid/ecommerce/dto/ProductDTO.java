@@ -16,11 +16,11 @@ public class ProductDTO {
     private String name;
     private int price;
     private String size;
+    private int stockQuantity;
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private LocalDateTime createdDate;
-    //private DiscountDTO discountDTO;
     private List<CompanyDTO> companies;
 
 

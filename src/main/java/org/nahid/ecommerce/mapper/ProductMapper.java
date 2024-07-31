@@ -25,6 +25,7 @@ public class ProductMapper {
                 productRequest.getName(),
                 productRequest.getPrice(),
                 productRequest.getSize(),
+                productRequest.getStockQuantity(),
                 productRequest.getDescription(),
                 category);
     }
@@ -37,6 +38,7 @@ public class ProductMapper {
                 productRequest.getName(),
                 productRequest.getPrice(),
                 productRequest.getSize(),
+                productRequest.getStockQuantity(),
                 productRequest.getDescription(),
                 category);
     }
@@ -48,6 +50,7 @@ public class ProductMapper {
                 product.getName(),
                 product.getPrice(),
                 product.getSize(),
+                product.getStockQuantity(),
                 product.getDescription(),
                 product.getCreatedDate(),
                 product.getCompanies().stream()
@@ -62,6 +65,7 @@ public class ProductMapper {
         productDTO.setName(product.getName());
         productDTO.setPrice(product.getPrice());
         productDTO.setSize(product.getSize());
+        productDTO.setStockQuantity(product.getStockQuantity());
         productDTO.setDescription(product.getDescription());
         productDTO.setCreatedDate(product.getCreatedDate());
 
